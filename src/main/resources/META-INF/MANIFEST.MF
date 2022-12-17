@@ -1,0 +1,3 @@
+Main-Class: org.springframework.boot.loader.JarLauncher
+Start-Class: com.mhawi.slider.SliderApplication
+BUNDLE_ROOT_PATH=target/classes/META-INF

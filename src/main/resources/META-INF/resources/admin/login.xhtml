@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+>
+
+<h:head>
+    <title>Login</title>
+    <h:outputStylesheet name="/css/login.css"/>
+    <link rel="icon" href="#{resource['images/icon.png']}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</h:head>
+
+<h:body>
+
+
+    <div class="header">
+
+        <!--Content before waves-->
+        <div class="inner-header flex">
+            <!--Just the logo.. Don't mind this-->
+
+            <h3>Login</h3>
+      </div>
+
+      <!--Waves Container-->
+      <div>
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+             viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+          <defs>
+            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+          </defs>
+          <g class="parallax">
+            <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+            <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+            <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+            <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+          </g>
+        </svg>
+      </div>
+      <!--Waves end-->
+
+    </div>
+    <!--Header ends-->
+
+    <!--Content starts-->
+    <div class="content flex">
+
+      <h:form prependId="false">
+        <p:outputLabel value="Login failed!" styleClass="red" style="color: red;font-weight: bold;"
+                       rendered="${!empty param['error']}" />
+        <p:inputText id="username" placeholder="User name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'" />
+        <p:password id="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'" />
+        <p:commandButton  ajax="false" styleClass="login-btn" value="Login"/>
+      </h:form>
+    <div class="bottom-container">
+    <div>
+    </div>
+    </div>
+    </div>
+
+    <!--Content ends-->
+            <h:outputScript>
+                $('*').removeClass('ui-inputfield ');
+
+            </h:outputScript>
+
+</h:body>
+</html>

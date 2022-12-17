@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:sec="http://www.springframework.org/security/tags" xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:g="http://java.sun.com/jsf/html">
+
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Slider Management</title>
+    <link rel="icon" href="#{resource['images/icon.png']}"/>
+    <h:outputStylesheet name="/css/main.css"/>
+    <h:outputStylesheet library="webjars" name="primeflex/2.0.0/primeflex.min.css"/>
+</h:head>
+
+<h:body>
+
+
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+
+
+        <div class="card crud-demo">
+            <p:growl id="messages" showDetail="true"/>
+
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <h:form id="frm2">
+                        <p:commandButton value="New"
+                                         icon="pi pi-plus"
+                                         actionListener="#{sliderMB.openNew}"
+                                         update=":form:manage-slider-content"
+                                         oncomplete="PF('manageSliderDialog').show()"
+                                         styleClass="ui-button-success"
+                                         style="margin-right: .5rem">
+                            <p:resetInput target=":form:manage-slider-content"/>
+                        </p:commandButton>
+
+                        <p:commandButton id="delete-sliders-button" value="#{sliderMB.deleteButtonMessage}"
+                                         icon="pi pi-trash" actionListener="#{sliderMB.deleteSelectedSliders}"
+                                         styleClass="ui-button-danger" disabled="#{!sliderMB.hasSelectedSliders()}"
+                                         update="@this">
+                            <p:confirm header="Confirmation" message="Delete the selected sliders?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+
+                    </h:form>
+                </p:toolbarGroup>
+                <p:toolbarGroup align="right" rendered="true">
+
+                    <h:form onsubmit="this.action='#{request.contextPath}/logout';"
+                            class="logout-form">
+
+                        <p:commandButton value="Home Site" type="button" onclick="window.open('/', 'Home');"
+                                         icon="pi pi-home" styleClass="ui-button-success"/>
+                        <p:spacer width="50px"></p:spacer>
+                        <p:commandButton value="Logout" icon="pi pi-power-off" styleClass="ui-button-danger"
+                                         ajax="false"/>
+                    </h:form>
+                </p:toolbarGroup>
+            </p:toolbar>
+            <h:form id="form">
+
+                <p:hotkey bind="ctrl+shift+1" action="#{sliderMB.clearCache()}"/>
+                <p:dataTable id="dt-sliders" widgetVar="dtSliders" var="slider" value="#{sliderMB.sliders}"
+                             reflow="true" styleClass="sliders-table" draggableRows="false"
+                             selection="#{sliderMB.selectedSliders}" rowKey="#{slider.id}" paginator="true"
+                             rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                    <f:facet name="header">
+                        <div class="sliders-table-header">
+                            <span style="font-weight: bold">SLIDERS</span>
+
+                            <span class="filter-container ui-input-icon-left">
+                        <i class="pi pi-search"/>
+                        <p:inputText id="globalFilter" onkeyup="PF('dtSliders').filter()" placeholder="Search"/>
+                    </span>
+
+                        </div>
+                    </f:facet>
+
+                    <p:ajax event="rowSelect" update=":frm2:delete-sliders-button"/>
+                    <p:ajax event="rowUnselect" update=":frm2:delete-sliders-button"/>
+                    <p:ajax event="rowSelectCheckbox" update=":frm2:delete-sliders-button"/>
+                    <p:ajax event="rowUnselectCheckbox" update=":frm2:delete-sliders-button"/>
+                    <p:ajax event="toggleSelect" update=":frm2:delete-sliders-button"/>
+                    <p:ajax event="rowReorder" listener="#{sliderMB.onRowReorder}" update=":messages"/>
+
+                    <p:column selectionMode="multiple" exportable="false" width="50">
+                        <i class="pi page-link"></i>
+                    </p:column>
+
+                    <p:column headerText="Id" sortBy="#{slider.id}" filterBy="#{slider.id}" filterMatchMode="contains"
+                              width="50" rendered="false">
+                        <h:outputText value="#{slider.id}"/>
+                    </p:column>
+
+
+                    <p:column headerText="Slider Name" sortBy="#{slider.slideName}" filterBy="#{slider.slideName}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{slider.slideName}"/>
+                    </p:column>
+                    <p:column headerText="Ordered" sortBy="#{slider.ordered}" filterBy="#{slider.ordered}" width="100">
+                        <h:outputText value="#{slider.ordered}"/>
+                    </p:column>
+
+                    <p:column headerText="Slide Type" field="slideType" sortBy="#{slider.slideType.name()}" width="120"
+                              filterMatchMode="exact">
+
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('dtSliders').filter()" styleClass="custom-filter">
+                                <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="IMAGE" itemValue="IMAGE"/>
+                                <f:selectItem itemLabel="VIDEO" itemValue="VIDEO"/>
+                            </p:selectOneMenu>
+                        </f:facet>
+
+                        <h:outputText value="#{slider.slideType.name()}" style="font-weight: 700"/>
+                    </p:column>
+
+                    <p:column headerText="status" field="status" sortBy="#{slider.status}" filterMatchMode="exact"
+                              width="100">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('dtSliders').filter()" styleClass="custom-filter">
+                                <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Atcive" itemValue="true"/>
+                                <f:selectItem itemLabel="Not Active" itemValue="false"/>
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText styleClass="slider-badge status-#{slider.status}"
+                                      value="#{slider.status ? 'Active':'Not Active'}"/>
+                    </p:column>
+
+                    <p:column headerText="Duration" sortBy="#{slider.duration}" width="100">
+                        <h:outputText value="#{slider.duration}"/>
+                    </p:column>
+                    <p:column headerText="Image" exportable="false">
+
+                        <p:lightBox styleClass="imagebox" id="lighbox1" rendered="#{slider.slideType.name()=='IMAGE'}">
+                            <h:outputLink value="#{request.contextPath}/images/#{slider.filename}"
+                                          title="#{slider.slideName}">
+                                <p:graphicImage url="#{request.contextPath}/images/#{slider.filename}"
+                                                width="100px" styleClass="slider-image"/>
+                            </h:outputLink>
+                        </p:lightBox>
+
+                        <ui:fragment
+                                rendered="#{slider.slideType.name()=='VIDEO'  and not empty slider.filename}">
+                            <video style="    height: 150px;    width: 150px;    display: flex;" class="slide"
+                                   muted="true" loop="true">
+                                <source src="#{request.contextPath}/images/#{slider.filename}?v=#{slider.version}"
+                                        type="video/mp4"/>
+                            </video>
+                        </ui:fragment>
+
+                    </p:column>
+
+                    <p:column exportable="false">
+                        <p:commandButton icon="pi pi-pencil" update=":form:manage-slider-content"
+                                         oncomplete="PF('manageSliderDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success" process="@this">
+                            <f:setPropertyActionListener value="#{slider}" target="#{sliderMB.selectedSlider}"/>
+                            <p:resetInput target=":form:manage-slider-content"/>
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                         oncomplete="PF('deleteSliderDialog').show()">
+                            <f:setPropertyActionListener value="#{slider}" target="#{sliderMB.selectedSlider}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:importEnum type="com.mhawi.slider.business.model.SlideType" var="SliderType"
+                              allSuffix="ALL_ENUM_VALUES"/>
+                <p:dialog header="Slider Details" showEffect="fade" modal="true" resizable="true"
+                          closeOnEscape="true" blockScroll="true" style="max-height: 80vh;overflow: auto;"
+                          widgetVar="manageSliderDialog" responsive="true">
+                    <p:messages id="messagesDlg"/>
+                    <p:outputPanel id="manage-slider-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty sliderMB.selectedSlider}">
+
+                            <div class="p-field">
+                                <p:outputLabel for="name">Slider Name</p:outputLabel>
+                                <p:inputText id="name" label="Slider Name" value="#{sliderMB.selectedSlider.slideName}"
+                                             required="true"/>
+                            </div>
+
+                            <div class="p-formgrid p-grid">
+                                <g:panelGroup id="fileDiv" layout="blcok" styleClass="p-field p-col">
+                                    <p:outputLabel for="file">File</p:outputLabel>
+
+                                    <p:graphicImage
+                                            url="#{request.contextPath}/images/#{sliderMB.selectedSlider.filename}"
+                                            style="    height: 150px;    width: 150px;    display: flex;"
+                                            styleClass="slider-image center?v=#{sliderMB.selectedSlider.version}"
+                                            rendered="#{sliderMB.selectedSlider.slideType.name()=='IMAGE' and not empty sliderMB.selectedSlider.filename}"/>
+                                    <ui:fragment
+                                            rendered="#{sliderMB.selectedSlider.slideType.name()=='VIDEO'  and not empty sliderMB.selectedSlider.filename}">
+                                        <video style="    height: 150px;    width: 150px;    display: flex;"
+                                               autoplay="false" class="slide"
+                                               muted="true" loop="true">
+                                            <source src="#{request.contextPath}/images/#{sliderMB.selectedSlider.filename}?v=#{sliderMB.selectedSlider.version}"
+                                                    type="video/mp4"/>
+                                        </video>
+                                    </ui:fragment>
+                                    <p:commandButton icon="pi pi-trash"
+                                                     actionListener="#{sliderMB.deleteFile()}"
+                                                     process="@this"
+                                                     styleClass="ui-button-warning rounded-button"
+                                                     update="messages1 fileDiv categoryDiv  "
+                                                     rendered="#{not empty sliderMB.selectedSlider.filename}"/>
+                                    <p:fileUpload id="file" listener="#{sliderMB.handleFileUpload}"
+                                                  dragDropSupport="true"
+                                                  auto="true" virusScan="false"
+                                                  rendered="#{empty sliderMB.selectedSlider.filename}"
+                                                  process="@this"
+                                                  update="messages1 fileDiv categoryDiv duration"
+                                                  allowTypes="/(\.|\/)(gif|jpe?g|png|mp4)$/"
+                                                  accept=".gif,.jpg,.jpeg,.png,.mp4"/>
+
+                                    <p:growl id="messages1" showDetail="true"/>
+
+                                </g:panelGroup>
+                            </div>
+
+
+                            <div class="p-formgrid p-grid">
+                                <div class="p-field p-col">
+                                    <p:outputLabel for="status">Status</p:outputLabel>
+                                    <p:toggleSwitch id="status" value="#{sliderMB.selectedSlider.status}"/>
+                                </div>
+                                <div class="p-field p-col">
+                                    <p:outputLabel for="order">Order</p:outputLabel>
+                                    <p:inputNumber label="duration" id="order" decimalPlaces="0"
+                                                   value="#{sliderMB.selectedSlider.ordered}"/>
+                                </div>
+                                <div class="p-field p-col">
+                                    <p:outputLabel for="duration">duration (secound)</p:outputLabel>
+                                    <p:spinner required="true" label="duration" id="duration" min="2"
+                                               value="#{sliderMB.selectedSlider.duration}"/>
+                                </div>
+                            </div>
+
+                            <h:panelGroup id="categoryDiv" layout="block" styleClass="p-field" rendered="false">
+                                <p:outputLabel for="category">Slide Type</p:outputLabel>
+                                <p:selectOneRadio id="category" value="#{sliderMB.selectedSlider.slideType}"
+                                                  disabled="true"
+                                                  converter="omnifaces.SelectItemsIndexConverter" label="Slide Type"
+                                                  required="true"
+                                                  layout="responsive" columns="2">
+                                    <f:selectItem itemLabel="#{SliderType.IMAGE.name()}"
+                                                  itemValue="#{SliderType.IMAGE}"/>
+                                    <f:selectItem itemLabel="#{SliderType.VIDEO.name()}"
+                                                  itemValue="#{SliderType.VIDEO}"/>
+                                </p:selectOneRadio>
+                            </h:panelGroup>
+
+                            <div class="p-formgrid p-grid">
+                                <h:panelGroup id="fromDateDiv" layout="block" styleClass="p-field p-col">
+                                    <p:outputLabel for="fromDate" value="From Date"/>
+                                    <p:datePicker id="fromDate" value="#{sliderMB.selectedSlider.fromDate}"
+                                                  showTime="false"
+                                                  showButtonBar="true"
+                                                  showIcon="true" pattern="dd/MM/yyyy">
+
+                                    </p:datePicker>
+                                </h:panelGroup>
+                                <h:panelGroup id="toDateDiv" layout="block" styleClass="p-field p-col">
+                                    <p:outputLabel for="toDate" value="To Date"/>
+                                    <p:datePicker id="toDate" value="#{sliderMB.selectedSlider.toDate}"
+                                                  showTime="false" pattern="dd/MM/yyyy"
+                                                  showButtonBar="true"
+                                                  showIcon="true">
+
+                                    </p:datePicker>
+                                </h:panelGroup>
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" icon="pi pi-check" actionListener="#{sliderMB.saveSlider}"
+                                         validateClient="true" update="manage-slider-content"
+                                         process="manage-slider-content @this"/>
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageSliderDialog').hide()"
+                                         class="ui-button-secondary"/>
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="deleteSliderDialog" showEffect="fade" width="300"
+                                 message="Delete the slider?" header="Confirm" severity="warn">
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{sliderMB.deleteSlider}"
+                                     process="@this" oncomplete="PF('deleteSliderDialog').hide()"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteSliderDialog').hide()"/>
+                </p:confirmDialog>
+
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                     icon="pi pi-times"/>
+                </p:confirmDialog>
+
+
+                <p:ajaxStatus onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"/>
+
+                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
+                          showHeader="false">
+                    <div class="p-text-center">
+                        <i class="pi pi-spin pi-spinner loading-icon" aria-hidden="true"></i>
+                    </div>
+                </p:dialog>
+            </h:form>
+        </div>
+
+    </sec:authorize>
+</h:body>
+</html>

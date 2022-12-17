@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mhawi</groupId>
+    <artifactId>slider</artifactId>
+    <version>0.0.1</version>
+    <packaging>jar</packaging>
+
+    <name>slider</name>
+    <description>JSF PrimeFaces Slider Management</description>
+    <url>https://mhawi.com</url>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.5</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.joinfaces</groupId>
+                <artifactId>joinfaces-dependencies</artifactId>
+                <version>4.5.5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>primefaces-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>omnifaces3-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>primeflex</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+            <version>5.6.0.CR1</version>
+        </dependency>
+        <!--   <dependency>
+               <groupId>xuggle</groupId>
+               <artifactId>xuggle-xuggler</artifactId>
+               <version>5.4</version>
+           </dependency>
+           <dependency>
+               <groupId>xuggle</groupId>
+               <artifactId>xuggle-utils</artifactId>
+               <version>1.22</version>
+           </dependency>-->
+
+        <dependency>
+            <groupId>org.mp4parser</groupId>
+            <artifactId>isoparser</artifactId>
+            <version>1.9.41</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>sockjs-client</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>stomp-websocket</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>3.3.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.1.1-1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.kokorin.jaffree</groupId>
+            <artifactId>jaffree</artifactId>
+            <version>2021.10.19</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>dcm4che repo</id>
+            <url>https://www.dcm4che.org/maven2/</url>
+        </repository>
+
+        <repository>
+            <id>xuggle repo</id>
+            <url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
+        </repository>
+        <repository>
+            <id>liferay repo</id>
+            <url>https://repository.liferay.com/nexus/content/repositories/public/</url>
+        </repository>
+    </repositories>
+
+    <!-- <build>
+         <plugins>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+                 <version>2.5.1</version>
+                 <configuration>
+                     <source>1.8</source>
+                     <target>1.8</target>
+                 </configuration>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+                 <version>3.2.4</version>
+                 <executions>
+
+                     <execution>
+                         <phase>package</phase>
+                         <goals>
+                             <goal>shade</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+                 <configuration>
+                     <shadedArtifactAttached>true</shadedArtifactAttached>
+                     <shadedClassifierName>shaded</shadedClassifierName>
+                     <transformers>
+                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                             <mainClass>com.mhawi.slider.SliderApplication</mainClass>
+                         </transformer>
+                     </transformers>
+                 </configuration>
+             </plugin>
+             <plugin>
+                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                 <artifactId>launch4j-maven-plugin</artifactId>
+                 <version>2.1.2</version>
+                 <executions>
+                     <execution>
+                         <id>l4j-clui</id>
+                         <phase>package</phase>
+                         <goals>
+                             <goal>launch4j</goal>
+                         </goals>
+                         <configuration>
+                             <headerType>gui</headerType>
+                             <jar>${project.build.directory}/${project.build.finalName}.${project.packaging}</jar>
+                             <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
+                             <downloadUrl>http://java.com/download</downloadUrl>
+                             <classPath>
+                                 <mainClass>com.mhawi.slider.SliderApplication</mainClass>
+                                 <preCp>anything</preCp>
+                             </classPath>
+                             <icon>application.ico</icon>
+                             <jre>
+                                 <minVersion>1.6.0</minVersion>
+                                 <jdkPreference>preferJre</jdkPreference>
+                             </jre>
+                             <versionInfo>
+                                 <fileVersion>1.0.0.0</fileVersion>
+                                 <txtFileVersion>${project.version}</txtFileVersion>
+                                 <fileDescription>${project.name}</fileDescription>
+                                 <copyright>2012 mhawi.com</copyright>
+                                 <productVersion>1.0.0.0</productVersion>
+                                 <txtProductVersion>1.0.0.0</txtProductVersion>
+                                 <productName>${project.name}</productName>
+                                 <companyName>howtodoinjava.com</companyName>
+                                 <internalName>howtodoinjava</internalName>
+                                 <originalFilename>howtodoinjava.exe</originalFilename>
+                             </versionInfo>
+                         </configuration>
+                     </execution>
+                 </executions>
+             </plugin>
+         </plugins>
+     </build>
+ -->
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.5.6</version>
+
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
+
+            <!--<plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>l4j-clui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>console</headerType>
+                            <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
+                            <jar>${project.build.directory}/${project.build.finalName}.${project.packaging}</jar>
+                            <errTitle>encc</errTitle>
+                            <classPath>
+                                <mainClass>org.springframework.boot.loader.JarLauncher</mainClass>
+                                <addDependencies>true</addDependencies>
+                                <preCp>anything</preCp>
+                            </classPath>
+                            <jre>
+                                <minVersion>1.8.0</minVersion>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>1.2.3.4</fileVersion>
+                                <txtFileVersion>txt file version?</txtFileVersion>
+                                <fileDescription>a description</fileDescription>
+                                <copyright>my copyright</copyright>
+                                <productVersion>4.3.2.1</productVersion>
+                                <txtProductVersion>txt product version</txtProductVersion>
+                                <productName>E-N-C-C</productName>
+                                <internalName>ccne</internalName>
+                                <originalFilename>original.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+
+
+        </plugins>
+    </build>
+</project>

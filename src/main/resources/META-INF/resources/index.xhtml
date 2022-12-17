@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:f="http://java.sun.com/jsf/core">
+<f:view transient="true">
+
+    <h:head>
+        <title>Slider</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
+
+        <script src="/webjars/sockjs-client/sockjs.min.js" type="application/javascript"/>
+        <script src="/webjars/stomp-websocket/stomp.min.js" type="application/javascript"/>
+        <h:outputStylesheet library="webjars" name="primeflex/2.0.0/primeflex.min.css"/>
+        <link rel="icon" href="#{resource['images/icon.png']}"/>
+        <h:outputStylesheet>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                font-family: Arial;
+                font-size: 17px;
+            }
+
+            img {
+                position: fixed;
+                right: 0;
+                bottom: 0;
+                min-width: 100%;
+                min-height: 100%;
+                width: -webkit-fill-available !important;
+                height: -webkit-fill-available !important;
+            }
+
+            video {
+                object-fit: fill;
+                width: 100vw;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+
+            #button-full {
+                position: fixed;
+                background: transparent;
+                border: none !important;
+                bottom: 5px;
+                width: 25px;
+                height: 25px;
+                color: #d2c1c1;
+                font-size: 5px;
+                left: 5px;
+                outline: none !important;
+            }
+        </h:outputStylesheet>
+    </h:head>
+
+    <h:body>
+
+        <h:form id="form" prependId="false">
+            <h:panelGroup id="block" layout="block">
+                <c:forEach items="#{sliderViewMb.sliders}" var="slide">
+
+                    <p:graphicImage styleClass="lazy slide" id="img#{slide.id}" cache="true"
+                                    rendered="#{slide.slideType.name()=='IMAGE'}"
+                                    lang="#{slide.duration}"
+                                    value="#{request.contextPath}/images/#{slide.filename}?v=#{slide.version}">
+
+                    </p:graphicImage>
+                    <ui:fragment rendered="#{slide.slideType.name()=='VIDEO'}">
+
+                        <video style="display: none" autoplay="true" class="slide" muted="true" loop="true"
+                               id="video#{slide.id}"
+                               lang="#{slide.duration}">
+                            <source src="#{request.contextPath}/images/#{slide.filename}?v=#{slide.version}"
+                                    type="video/mp4"/>
+                            Your browser does not support HTML5 video.
+                        </video>
+                    </ui:fragment>
+                </c:forEach>
+
+            </h:panelGroup>
+            <h:outputScript>
+                var images;
+                var image = -1;
+                var timeOut;
+                var stompClient = null;
+                var socket;
+
+
+                function prevSlid() {
+                    image = image - 1;
+                    console.log(image);
+                    if (0 > image) {
+                        image = images.length - 1;
+                    }
+                    console.log(image);
+                    slide();
+                }
+
+                function nextSlid() {
+
+                    image = image + 1;
+                    if (image >= images.length) {
+                        image = 0;
+                    }
+                    slide();
+                }
+
+                function slide() {
+
+                    if (timeOut) {
+                        clearTimeout(timeOut);
+                    }
+                    if (images.length > 0) {
+                        var curr = $(images[image]).attr('id');
+                        var duration = $(images[image]).attr('lang') * 1000;
+                        var currCom = $(images[image]);
+                        if (images[image].nodeName.indexOf('VIDEO') > 0) {
+                            var video = currCom;
+                            video.play();
+                        }
+                        $('.active').hide();
+                        $('.active').fadeOut(500, function () {
+                            $(this).removeClass('active');
+                        });
+                        $(currCom).fadeIn(1000, function () {
+                            $(this).addClass('active');
+                        });
+                        timeOut = setTimeout(function () {
+                            nextSlid();
+                        }, duration);
+
+
+                    }
+                }
+
+                function prepareSlider() {
+                    images = $('.slide');
+                    $('.slide').hide();
+                    image = -1;
+                }
+
+                function connect() {
+                    console.log('try Connected: ');
+                    socket = new SockJS('/websocket');
+                    stompClient = Stomp.over(socket);
+                    stompClient.connect({}, function (frame) {
+                        console.log('Connected: ' + frame);
+                        stompClient.subscribe('/topic/updateSlider', function (dataaa) {
+                            console.log(JSON.parse(dataaa.body));
+                            updateForm();
+                        });
+                    }, function (message) {
+                        setTimeout(function () {
+                            connect();
+                        }, 1000);
+                    });
+
+                }
+
+
+                function disconnect() {
+                    if (stompClient !== null) {
+                        stompClient.disconnect();
+                    }
+                    console.log("Disconnected");
+                }
+
+
+                $(function () {
+                    connect();
+                    prepareSlider();
+                    nextSlid();
+                });
+
+                //this use to handle slide date i
+                setInterval(function () {
+                    let nowHour = new Date().getHours()
+                    let nowMinuts = new Date().getMinutes()
+                    let nowSecunds = new Date().getSeconds()
+                    // console.log("Hour " + nowHour + " Minutes " + nowMinuts + " Secunds " + nowSecunds)
+                    if (nowHour == 23 &amp;&amp; nowMinuts == 59 &amp;&amp; nowSecunds == 59) {
+                        console.log("RELOAD");
+                        updateForm();
+                    }
+                }, 1000);
+
+                function toggleFullScreen(elem) {
+                    // ## The below if statement seems to work better ## if ((document.fullScreenElement &amp;&amp; document.fullScreenElement !== null) || (document.msfullscreenElement &amp;&amp; document.msfullscreenElement !== null) || (!document.mozFullScreen &amp;&amp; !document.webkitIsFullScreen)) {
+                    if ((document.fullScreenElement !== undefined &amp;&amp; document.fullScreenElement === null) || (document.msFullscreenElement !== undefined &amp;&amp; document.msFullscreenElement === null) || (document.mozFullScreen !== undefined &amp;&amp; !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined &amp;&amp; !document.webkitIsFullScreen)) {
+                        if (elem.requestFullScreen) {
+                            elem.requestFullScreen();
+                        } else if (elem.mozRequestFullScreen) {
+                            elem.mozRequestFullScreen();
+                        } else if (elem.webkitRequestFullScreen) {
+                            elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+                        } else if (elem.msRequestFullscreen) {
+                            elem.msRequestFullscreen();
+                        }
+                    } else {
+                        if (document.cancelFullScreen) {
+                            document.cancelFullScreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.webkitCancelFullScreen) {
+                            document.webkitCancelFullScreen();
+                        } else if (document.msExitFullscreen) {
+                            document.msExitFullscreen();
+                        }
+                    }
+                }
+
+
+            </h:outputScript>
+            <p:outputLabel id="lbl" value=" "/>
+
+            <p:button id="button-full" icon="pi pi-window-maximize" type="button"
+                      onclick="toggleFullScreen(document.body)">
+            </p:button>
+            <p:remoteCommand update="block" onstart="clearTimeout(timeOut);console.log('********************')"
+                             oncomplete="prepareSlider();nextSlid()"
+                             name="updateForm"
+                             actionListener="#{sliderViewMb.init()}"/>
+
+            <p:hotkey bind="ctrl+shift+1" action="#{sliderMB.clearCache()}"/>
+            <p:hotkey bind="left" handler="prevSlid()"/>
+            <p:hotkey bind="right" handler="nextSlid()"/>
+        </h:form>
+        <h:outputScript>
+
+            $(function () {
+                try {
+                    // toggleFullScreen(document.body);
+                } catch (e) {
+
+                }
+
+            });
+        </h:outputScript>
+    </h:body>
+</f:view>
+</html>
