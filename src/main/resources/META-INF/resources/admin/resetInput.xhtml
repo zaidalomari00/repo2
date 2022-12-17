@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Slider Management</title>
+    <link rel="icon" href="#{resource['images/icon.png']}"/>
+    <h:outputStylesheet name="/css/main.css"/>
+    <h:outputStylesheet library="webjars" name="primeflex/2.0.0/primeflex.min.css"/>
+
+</h:head>
+<h:body>
+
+    <div class="card">
+
+
+        <h:form id="form">
+
+            <p:outputPanel id="panel" styleClass="mb-2">
+                <h:panelGrid columns="3" cellpadding="7">
+                    <p:outputLabel for="text1" value="Text 1:"/>
+                    <p:inputText id="text1" value="#{resetInputView.text1}" required="true" label="Firstname">
+                        <f:validateLength minimum="2"/>
+                        <!-- f:validateLength tag is used
+                        to validate the length of a string
+                        value in a particular range. -->
+                    </p:inputText>
+                    <p:message for="text1"/>
+
+                    <p:outputLabel for="text2" value="Text 2:"/>
+                    <p:inputText id="text2" value="#{resetInputView.text2}" required="true" label="Surname"/>
+                    <p:message for="text2"/>
+                </h:panelGrid>
+            </p:outputPanel>
+
+
+
+
+            <div class="flex justify-content-between">
+                <p:commandButton value="Submit" update="panel" action="#{resetInputView.save}" styleClass="mr-2"/>
+
+                <div>
+                    <p:commandButton value="Reset Fail" update="panel" process="@this"
+                                     action="#{resetInputView.resetFail}" styleClass="mr-2 ui-button-outlined"/>
+                    <p:commandButton value="Reset Tag" update="panel" process="@this" styleClass="mr-2 ui-button-outlined">
+                        <p:resetInput target="panel"/>
+                    </p:commandButton>
+                    <p:commandButton value="Reset Code" update="panel" process="@this"
+                                     action="#{resetInputView.reset}"
+                                     styleClass="mr-2 ui-button-outlined"/>
+                    <p:commandButton value="Reset Non-Ajax" action="#{resetInputView.reset}" immediate="true"
+                                     ajax="false" styleClass="mr-2 ui-button-outlined">
+                        <!--
+                         the immediate in commandButton => is to navigate the user to another
+                          page without processing any data currently in input fields of the current screen
+                         -->
+                        <p:resetInput target="panel"/>
+                    </p:commandButton>
+                    <p:commandButton value="Reset p:ajax">
+                        <p:ajax update="panel" resetValues="true"/>
+                    </p:commandButton>
+                </div>
+
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>
